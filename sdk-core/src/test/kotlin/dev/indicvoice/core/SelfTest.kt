@@ -3,7 +3,7 @@ package dev.indicvoice.core
 import java.io.File
 
 /**
- * Dependency-free self test of the core (run by scripts/run-tests.sh):
+ * Dependency-free self test of the core (run by scripts/setup.sh, step 4):
  *   java -cp build/selftest.jar:build/indicvoice-cli.jar dev.indicvoice.core.SelfTest [wav-file]
  * Prints one line per check; exits non-zero on failure.
  */

@@ -16,7 +16,7 @@ class BackendSettings {
 
 /**
  * Tier 3 STT: talks to the integrator's backend using the SDK's own neutral
- * contract (see proxy/CONTRACT.md). The backend decides which vendor to use;
+ * contract (see docs/BACKEND-CONTRACT.md). The backend decides which vendor to use;
  * the app never sees vendor keys or vendor-specific formats.
  *
  *   POST {backendUrl}{sttPath}

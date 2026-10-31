@@ -9,7 +9,7 @@ found, the fixes in this version, and the research plan for getting on‑device 
 | # | Problem | Effect | Fix |
 |---|---|---|---|
 | 1 | The laptop kit had only the Dolphin pack, and **Auto** sent everything to it. Dolphin covers 40 Eastern languages (Chinese, Japanese, …) and has no English. | "hello" → Japanese / Devanagari garbage | **Audio language ID first** (Whisper LID, `stt.languageId`), then the language's pack: English → Whisper base.en, Hindi/Urdu → Dolphin, others → Omnilingual. Output in a foreign script, mixed scripts, or a script that contradicts the language heard is rejected and other packs are tried. (`IndicVoice.transcribeAuto`) |
-| 2 | The test site converted 48 kHz microphone audio to 16 kHz by plain interpolation, with no low‑pass filter. | 8–24 kHz noise and hiss folded into the speech band, hurting every model | Windowed‑sinc anti‑alias filter before decimation (12 kHz test tone: 0.354 → 0.0007). `proxy/web/msite.html`, `index.html` |
+| 2 | The browser test page converted 48 kHz microphone audio to 16 kHz by plain interpolation, with no low‑pass filter. | 8–24 kHz noise and hiss folded into the speech band, hurting every model | Windowed‑sinc anti‑alias filter before decimation (12 kHz test tone: 0.354 → 0.0007). (test kit) |
 | 3 | **sherpa‑onnx 1.13.8 Whisper bug, part 1:** byte‑level tokens are turned into text one at a time, so a Devanagari letter split across two tokens is dropped. | "मेरा नाम" → "मेरा ाम" | `WhisperBytes`: a rewritten tokens file maps incomplete bytes to private‑use characters, and the text is reassembled into exact UTF‑8 afterwards. (Fixed upstream in 2.0; we can't move to 2.0 yet because it removed the espeak‑ng front end our TTS voices need.) |
 | 4 | **sherpa‑onnx Whisper bug, part 2:** output is capped at ~6 tokens per second of audio, while Hindi needs 3–4× more byte tokens. | Hindi sentences cut off half way | Trailing silence (4× the speech, max 29 s) for non‑English Whisper decoding, which raises the cap |
 | 5 | Dolphin **base** is the smallest Dolphin. | Weaker Hindi | Added `dolphin-small-int8` (≈3× parameters); laptop/server default for Hindi |
@@ -33,7 +33,7 @@ gap was the two sherpa‑onnx bugs, not the model.
 
 ## 3. Measure on real voices — the accuracy test
 
-The test site (`START.command` → `http://localhost:8080/m`) has an **Accuracy test — your voice** card:
+The internal test kit (laptop server + test page) has an **Accuracy test — your voice** card:
 read the 15 prompted sentences (10 Hindi, 5 English), press **Run test**, and the local server scores
 Auto mode and every installed STT pack on those recordings: accuracy, WER, CER, whether the language was
 identified correctly, and speed. Clips stay on the machine (`build/eval/`). Scoring normalises spelling
@@ -46,7 +46,7 @@ Do this with 3–5 different speakers and both a laptop mic and a phone before c
 1. **AI4Bharat IndicConformer** — trained on IndicVoices, i.e. real Indian speech from many districts and
    accents; it is the strongest open model family for Indian languages on the
    [Vistaar benchmark](https://github.com/AI4Bharat/vistaar). Needs a one‑time NeMo → ONNX export with
-   sherpa‑onnx metadata (`scripts/export-indicconformer.md`; needs Python + NeMo, not available in the
+   sherpa‑onnx metadata (`docs/EXPORT-INDICCONFORMER.md`; needs Python + NeMo, not available in the
    authoring environment). Community exports to look at:
    [jeswinjestin/sherpa-onnx-nemo-ctc-indicconformer-malayalam](https://huggingface.co/jeswinjestin/sherpa-onnx-nemo-ctc-indicconformer-malayalam)
    (sherpa format, Malayalam) and [trysem/indicconformer-120m-onnx](https://huggingface.co/trysem/indicconformer-120m-onnx)
@@ -61,7 +61,7 @@ Do this with 3–5 different speakers and both a laptop mic and a phone before c
 4. **Tier 3 for hard audio and Hinglish**: Sarvam Saaras handles code‑mixed Hindi‑English best in our
    comparison doc; enable it in the backend with `SARVAM_API_KEY`.
 5. Upgrade to sherpa‑onnx 2.x once its TTS front end works with our voices again (removes the Whisper
-   work‑arounds), and re‑run `scripts/run-tests.sh` + the accuracy test.
+   work‑arounds), and re‑run `scripts/setup.sh` + the accuracy test.
 
 ## 5. Known limits
 

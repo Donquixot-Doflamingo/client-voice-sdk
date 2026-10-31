@@ -1,8 +1,8 @@
 # Review notes — independent code review before hand-off
 
-A second reviewer (no part in writing the code) read `sdk-core`, `sdk-sherpa`, `sdk-android` and the Expo
+A second reviewer (no part in writing the code) read `sdk-core`, `sdk-sherpa`, `sdk-android` and the (test-only) Expo
 module looking for concurrency, lifecycle and fallback bugs. Twelve findings; all fixed and re-tested
-(`scripts/run-tests.sh` → `docs/TEST-REPORT.md`, 38/38). Listed here so the team knows what was changed and why.
+(`scripts/run-tests.sh` → `docs/TEST-REPORT.md`, all checks). Listed here so the team knows what was changed and why.
 
 | # | Where | Finding | Fix |
 |---|---|---|---|

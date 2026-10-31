@@ -1,0 +1,22 @@
+name: SDK build + tests
+# Same one command a developer runs after cloning. Models are skipped here to keep CI fast and offline-friendly.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  setup:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: scripts/setup.sh --no-models
+        run: ./scripts/setup.sh --no-models
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: client-voice-sdk-jar
+          path: build/client-voice-sdk.jar

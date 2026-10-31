@@ -1,38 +1,25 @@
-# Build output (CI builds the jars: .github/workflows/android-apk.yml; locally: scripts/build-jvm.sh)
+# Build output and the private tool downloads made by scripts/setup.sh
 build/
-dist/
-*.class
-.gradle/
 **/build/
+.tools/
+.gradle/
+*.class
+local.properties
 
-# Downloaded at build/run time (scripts/fetch-sherpa.sh, apps/VoiceTestApp/scripts/fetch-sherpa.js, bin/indicvoice packs install)
-third_party/sherpa-onnx/libs/*.jar
-third_party/sherpa-onnx/libs/*.aar
-apps/VoiceTestApp/modules/indic-voice/ios/Frameworks/*.xcframework/
-apps/VoiceTestApp/modules/indic-voice/ios/Frameworks/*.zip
+# Downloaded at build time (scripts/tools.sh, scripts/fetch-sherpa.sh)
+third_party/sherpa-onnx/libs/
+third_party/sherpa-onnx/ios/
+
+# Model packs are downloaded on demand (config/catalog.json) — never commit them
 packs/
 *.onnx
 *.tar.bz2
 
-# Laptop test kit extras (bundled Java runtime, models, keys) — never commit these
-jre/
-_to_delete/
-sarvam-key.txt
-*.key
-.env
-.env.local
-
-# Recordings and logs from testing (may contain people's voices)
+# Recordings, logs, secrets
 *.wav
 *.log
-debug-audio/
-eval/
-
-# React Native / Expo
-node_modules/
-apps/VoiceTestApp/android/
-apps/VoiceTestApp/ios/
-apps/VoiceTestApp/.expo/
+.env
+*.key
 
 # OS / editors
 .DS_Store

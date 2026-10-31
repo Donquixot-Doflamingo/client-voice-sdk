@@ -1,14 +1,14 @@
 # Tier‑3 backend contract (`/v1`)
 
-The SDK and the React Native wrapper never talk to a speech vendor directly. They talk to **your** backend
+The SDK never talks to a speech vendor directly. It talks to **your** backend
 through this small, vendor‑neutral HTTP contract. Put any provider behind it (Sarvam, Google, Azure,
 ElevenLabs, your own GPU box) and swap it without touching the app.
 
-The reference implementation is `proxy/` (Kotlin, zero dependencies, `bin/indicvoice-proxy`). It ships two
-providers: **`local`** (runs the same on‑device models as the app, on the server — free) and **`sarvam`**
-(Saaras v4 STT, Bulbul v3 TTS; needs `SARVAM_API_KEY`).
+A reference implementation (Kotlin, zero dependencies) exists in the team's internal test kit, with two providers:
+**`local`** (runs the same on‑device models as the app, on the server — free) and **`sarvam`** (Saaras v4 STT,
+Bulbul v3 TTS; needs `SARVAM_API_KEY`). Any server that follows this document works.
 
-All responses are UTF‑8 JSON unless stated. CORS `*` is enabled so the web console can call it.
+All responses are UTF‑8 JSON unless stated. Enable CORS if browsers call it directly.
 
 ## Auth
 
@@ -86,7 +86,7 @@ Response `200`:
 ## `GET /v1/catalog.json`
 
 Serves the tier‑2 pack catalog, so the backend can double as the catalog host
-(`voice-config.json → packs.catalogUrl`, or `EXPO_PUBLIC_VOICE_CATALOG_URL` in the app).
+(`voice-config.json → packs.catalogUrl`).
 
 ## Implementing it elsewhere (Node/Python/Go)
 
@@ -108,9 +108,9 @@ Body: `audio/wav` (16 kHz mono preferred). Reply:
 ```
 
 `raw` is what the model heard (may be a language outside the 23, e.g. `ja`); `language` is `null` then.
-Used by the test site's tier‑1 Auto mode (browser engines need the language up front).
+Useful when the client has to pick a language before recognising (e.g. OS engines that need it up front).
 
 ## Optional request header: `X-Voice-Provider`
 
 `X-Voice-Provider: local` (or `sarvam`) pins `/v1/stt` and `/v1/tts` to one provider instead of the configured order.
-The test site sends `local` for its Tier 2 tab so a configured Sarvam key never answers "tier 2" requests.
+Useful for testing one provider at a time.

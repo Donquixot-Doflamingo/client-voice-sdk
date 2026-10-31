@@ -144,7 +144,7 @@ class AndroidSpeaker : AudioSink {
     override fun stop() { track?.let { try { it.pause(); it.flush() } catch (_: Exception) {} }; track = null }
 }
 
-/** Convenience entry point for Android apps and the React Native module. */
+/** Convenience entry point for Android apps (and for wrappers such as a React Native module). */
 object IndicVoiceAndroid {
     /**
      * Loads voice-config.json (and catalog.json) from assets, keeping a copy

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Live-path test: replays a recording as 20 ms microphone frames (silence + utterance + silence, twice)
  * through IndicVoice.startLive → VAD segmenter → tier-2 engine, and checks two finals + a clean stop.
- * Run: scripts/run-tests.sh (section 11) or see the kotlinc line there.
+ * Run (after scripts/setup.sh): java -cp "build/tests:build/client-voice-sdk.jar:<kotlin-stdlib>:<native jar>" dev.indicvoice.jvm.LiveTestKt <hindi.wav>
  */
 /** Replays a WAV as 20 ms frames (with leading/trailing silence) to exercise the live path end to end. */
 class ReplaySource(private val wav: PcmAudio) : AudioSource {

@@ -1,7 +1,3 @@
-plugins { kotlin("jvm"); application }
+plugins { kotlin("jvm"); `java-library` }
 kotlin { jvmToolchain(17) }
-application {
-    mainClass.set("dev.indicvoice.jvm.Main")
-    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Xmx2g")
-}
-dependencies { implementation(project(":sdk-sherpa")) }
+dependencies { api(project(":sdk-sherpa")) }

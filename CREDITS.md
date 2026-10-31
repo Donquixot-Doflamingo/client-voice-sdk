@@ -39,15 +39,15 @@ All STT packs are the ONNX exports published by the sherpa-onnx project
 | ONNX Runtime | inference engine inside sherpa-onnx | MIT | [github.com/microsoft/onnxruntime](https://github.com/microsoft/onnxruntime) |
 | espeak-ng ⚠️ | phonemiser used by Piper / Kokoro / Mimic voices (`espeak-ng-data` inside the TTS packs) | **GPL-3.0** | [github.com/espeak-ng/espeak-ng](https://github.com/espeak-ng/espeak-ng) |
 | Kotlin | SDK language | Apache-2.0 | [kotlinlang.org](https://kotlinlang.org) |
-| React Native, Expo | test app + RN wrapper | MIT | [reactnative.dev](https://reactnative.dev) · [expo.dev](https://expo.dev) |
-| Eclipse Temurin JRE | only in the macOS laptop test kit (`jre/`, not in git) | GPL-2.0 with Classpath Exception | [adoptium.net](https://adoptium.net) |
+| Eclipse Temurin JDK | downloaded by `scripts/setup.sh` into `.tools/` only when the machine has no Java 17+ (not in git, not shipped) | GPL-2.0 with Classpath Exception | [adoptium.net](https://adoptium.net) |
+| Kotlin compiler | downloaded by `scripts/setup.sh` into `.tools/` when missing (build tool, not shipped) | Apache-2.0 | [github.com/JetBrains/kotlin](https://github.com/JetBrains/kotlin) |
 
 ## Services (tier 3, optional)
 
 | Service | Used for | Terms |
 |---|---|---|
-| Sarvam AI — Saaras (STT), Bulbul (TTS) | optional hosted provider in the reference backend (`proxy/`), only when `SARVAM_API_KEY` is set | commercial API — [sarvam.ai](https://www.sarvam.ai) |
-| Google / Apple speech | tier 1 = the operating system's or browser's own engine (Android `SpeechRecognizer`/`TextToSpeech`, Apple Speech/`AVSpeechSynthesizer`, Web Speech API) | governed by the OS / browser terms |
+| Sarvam AI — Saaras (STT), Bulbul (TTS) | an option for *your* tier-3 backend (the SDK itself never calls it) | commercial API — [sarvam.ai](https://www.sarvam.ai) |
+| Google / Apple speech | tier 1 = the operating system's or browser's own engine (Android `SpeechRecognizer`/`TextToSpeech`, Apple Speech/`AVSpeechSynthesizer`) | governed by the OS / browser terms |
 
 ## How to cite the main models
 

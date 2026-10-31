@@ -1,0 +1,168 @@
+{
+  "$schema": "./voice-config.schema.json",
+  "version": 1,
+  "_comment": "Runtime configuration of the Indic Voice SDK. Ship this file with the app (assets) or fetch it from your CDN; change behaviour here without touching code. Nothing in this file is a secret, so it never needs ENV variables.",
+  "features": {
+    "stt": true,
+    "tts": true
+  },
+  "defaultLanguage": "hi",
+  "allowedLanguages": [
+    "hi",
+    "en",
+    "bn",
+    "ta",
+    "te",
+    "mr",
+    "gu",
+    "kn",
+    "ml",
+    "pa",
+    "or",
+    "as",
+    "ur",
+    "ne",
+    "sa",
+    "ks",
+    "kok",
+    "mai",
+    "mni",
+    "sat",
+    "sd",
+    "doi",
+    "brx"
+  ],
+  "stt": {
+    "_comment": "tierPolicy: DEVICE_FIRST (1→2→3), DEVICE_ONLY (1→2), HOSTED_FIRST (3→1→2), HOSTED_ONLY (3), ORDER (use tierOrder as given)",
+    "tierPolicy": "DEVICE_FIRST",
+    "tierOrder": [
+      1,
+      2,
+      3
+    ],
+    "fallbackOnError": true,
+    "fallbackOnLowConfidence": 0.0,
+    "languageDetection": {
+      "enabled": true,
+      "useStopwords": true
+    },
+    "languageId": {
+      "_comment": "Auto mode: the spoken language is identified from the AUDIO (multilingual Whisper, ~0.1-0.3 s) and the utterance is transcribed with that language's pack. Output in a script none of our languages use (e.g. Japanese) is rejected and the fallback languages are tried. routeAs sends a language to another language's pack (Urdu → the Hindi/Urdu-capable Dolphin pack).",
+      "enabled": true,
+      "pack": "whisper-base-int8",
+      "routeAs": {
+        "ur": "hi"
+      },
+      "fallbackLanguages": [
+        "en",
+        "hi"
+      ],
+      "minAudioMs": 250
+    },
+    "live": {
+      "endpointSilenceMs": 700,
+      "maxUtteranceMs": 15000,
+      "vadThreshold": 0.5,
+      "minSpeechMs": 250
+    },
+    "tier1": {
+      "enabled": true,
+      "preferOnDevice": true,
+      "allowOnlineOsEngine": true,
+      "_comment": "On Android the OS engine is Google's recogniser; on iOS Apple Speech; on web the browser's SpeechRecognition."
+    },
+    "tier2": {
+      "enabled": true,
+      "numThreads": 2,
+      "vadPack": "silero-vad",
+      "defaultPack": "omnilingual-300m-int8",
+      "packByLanguage": {
+        "hi": "dolphin-base-int8",
+        "en": "whisper-base-en-int8",
+        "bn": "omnilingual-300m-int8",
+        "gu": "omnilingual-300m-int8",
+        "as": "omnilingual-300m-int8",
+        "ur": "omnilingual-300m-int8",
+        "ta": "omnilingual-300m-int8",
+        "te": "omnilingual-300m-int8",
+        "mr": "omnilingual-300m-int8",
+        "kn": "omnilingual-300m-int8",
+        "ml": "omnilingual-300m-int8",
+        "pa": "omnilingual-300m-int8",
+        "ne": "omnilingual-300m-int8",
+        "or": "omnilingual-300m-int8",
+        "ks": "omnilingual-300m-int8",
+        "sat": "omnilingual-300m-int8",
+        "sa": "omnilingual-300m-int8",
+        "mai": "omnilingual-300m-int8",
+        "kok": "omnilingual-300m-int8",
+        "doi": "omnilingual-300m-int8",
+        "brx": "omnilingual-300m-int8",
+        "mni": "omnilingual-300m-int8",
+        "sd": "omnilingual-300m-int8",
+        "auto": "omnilingual-300m-int8"
+      },
+      "_comment": "Verified on generated speech (docs/TEST-REPORT.md): Hindi -> Dolphin (fast, WER 0.00 on test sentences); Malayalam -> Dolphin writes Tamil, Omnilingual is correct; Gujarati -> both fine, Omnilingual cleaner; English -> Whisper base.en (Dolphin returns nothing). Change any mapping here without a code change.",
+      "maxLoadedPacks": 2
+    },
+    "tier3": {
+      "enabled": true,
+      "backendUrl": "",
+      "sttPath": "/v1/stt",
+      "timeoutMs": 20000,
+      "authHeader": "Authorization",
+      "authValuePrefix": "Bearer ",
+      "sendFormat": "wav",
+      "_comment": "backendUrl is normally injected by the host app at runtime (the test app takes it from the UI or its .env). Leave empty to disable tier 3."
+    }
+  },
+  "tts": {
+    "_comment": "voicePolicy: OS_FIRST (1→2→3), CONSISTENT (2→3→1: same voice everywhere), DEVICE_ONLY (1→2), HOSTED_FIRST (3→1→2), HOSTED_ONLY (3), ORDER",
+    "voicePolicy": "OS_FIRST",
+    "tierOrder": [
+      1,
+      2,
+      3
+    ],
+    "fallbackOnError": true,
+    "sampleRate": 22050,
+    "tier1": {
+      "enabled": true,
+      "preferOffline": true
+    },
+    "tier2": {
+      "enabled": true,
+      "numThreads": 2,
+      "packByLanguage": {
+        "hi": "kokoro-int8-multilang",
+        "ml": "piper-ml-meera",
+        "en": "kokoro-int8-multilang",
+        "gu": "mimic3-gu-cmu-indic"
+      }
+    },
+    "tier3": {
+      "enabled": true,
+      "backendUrl": "",
+      "ttsPath": "/v1/tts",
+      "timeoutMs": 20000,
+      "authHeader": "Authorization",
+      "authValuePrefix": "Bearer "
+    },
+    "preferredVoices": {
+      "hi": "",
+      "ta": ""
+    }
+  },
+  "packs": {
+    "_comment": "Model packs for tier 2. The SDK merges catalogInline with the remote catalog at catalogUrl (remote wins). Each pack lists individual files with sha256, so downloads are resumable and verifiable; packs can also be a single .zip.",
+    "catalogUrl": "",
+    "catalogRefreshHours": 24,
+    "storageDir": "",
+    "autoDownloadOnWifi": false,
+    "catalogInline": "./catalog.json"
+  },
+  "logging": {
+    "level": "info",
+    "redactTranscripts": true
+  }
+}

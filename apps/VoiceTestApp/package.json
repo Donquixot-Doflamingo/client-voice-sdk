@@ -1,0 +1,34 @@
+{
+  "name": "voice-test-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node scripts/fetch-sherpa.js",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "prebuild": "expo prebuild",
+    "typecheck": "tsc --noEmit",
+    "build:android:apk": "eas build -p android --profile preview",
+    "build:android:dev": "eas build -p android --profile development",
+    "build:ios:dev": "eas build -p ios --profile development"
+  },
+  "dependencies": {
+    "expo": "~58.0.21",
+    "expo-build-properties": "~58.0.11",
+    "expo-dev-client": "~58.0.17",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.3.0",
+    "react-native": "0.88.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~5.9.0"
+  },
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": "./modules"
+    }
+  }
+}

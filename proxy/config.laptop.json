@@ -1,0 +1,44 @@
+{
+  "_comment": "Laptop test server (START.command / bin/start-msite.sh). Same as config.json plus: keeps more models loaded, and saves the last 50 test recordings + results to build/debug-audio (on this machine only) so problems can be reproduced. Do not use this file on a shared server.",
+  "port": 8080,
+  "logLevel": "info",
+  "maxAudioSeconds": 60,
+  "stt": {
+    "providers": [
+      "sarvam",
+      "local"
+    ]
+  },
+  "tts": {
+    "providers": [
+      "sarvam",
+      "local"
+    ]
+  },
+  "sarvam": {
+    "baseUrl": "https://api.sarvam.ai",
+    "sttModel": "saaras:v4",
+    "ttsModel": "bulbul:v3",
+    "ttsSpeaker": "",
+    "timeoutMs": 20000
+  },
+  "local": {
+    "_comment": "Free provider: runs the same tier-2 packs as the app, on the server. Override packs per language here; defaults come from sdkConfig.",
+    "numThreads": 4,
+    "preload": true,
+    "sttPackByLanguage": {
+      "hi": "dolphin-small-int8"
+    },
+    "ttsPackByLanguage": {
+      "hi": "kokoro-int8-multilang",
+      "en": "kokoro-int8-multilang"
+    },
+    "_packs": "Laptop/server defaults: Hindi/Urdu → Dolphin small (accurate + fast on a laptop); English → Whisper base.en; others → Omnilingual (from voice-config). Run the accuracy test in the test site (/m) to compare every installed model on your own voice; whisper-turbo-int8 is the most accurate but ~10x slower.",
+    "maxLoadedPacks": 4
+  },
+  "packsDir": "~/.indicvoice/packs",
+  "sdkConfig": "../config/voice-config.json",
+  "catalog": "../config/catalog.json",
+  "debugAudioDir": "../build/debug-audio",
+  "evalDir": "../build/eval"
+}

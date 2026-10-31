@@ -1,0 +1,475 @@
+{
+  "version": 1,
+  "_comment": "Tier-2 model packs. Edit/replace this file (or host it at packs.catalogUrl) to change which models the SDK can download — no code change needed. URLs below are the public sherpa-onnx GitHub release assets; copy them to your own CDN for production. sizeBytes = download size. All sha256 values were computed on 2026-10-30.",
+  "runtime": {
+    "name": "sherpa-onnx",
+    "version": "1.13.8",
+    "_comment": "Packs are ONNX models in sherpa-onnx layout. Keep the runtime at 1.13.x: 2.0 dropped the built-in espeak-ng text frontend that the Piper/Kokoro voices need."
+  },
+  "packs": [
+    {
+      "id": "silero-vad",
+      "kind": "vad",
+      "engine": "silero-vad",
+      "name": "Silero VAD v5",
+      "languages": [],
+      "sizeBytes": 643854,
+      "license": "MIT",
+      "commercialUse": true,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx",
+        "format": "file",
+        "sha256": "9e2449e1087496d8d4caba907f23e0bd3f78d91fa552479bb9c23ac09cbb1fd6"
+      },
+      "model": {
+        "model": "silero_vad.onnx"
+      },
+      "notes": "Voice activity detection used to cut utterances for tiers 2 and 3. Tiny; always download."
+    },
+    {
+      "id": "dolphin-base-int8",
+      "kind": "stt",
+      "engine": "dolphin-ctc",
+      "name": "Dolphin base CTC (int8) — 15 Indian languages",
+      "languages": [
+        "hi",
+        "bn",
+        "gu",
+        "as",
+        "ur",
+        "ta",
+        "te",
+        "mr",
+        "kn",
+        "ml",
+        "pa",
+        "ne",
+        "or",
+        "ks",
+        "sat"
+      ],
+      "sizeBytes": 80671385,
+      "installedBytes": 104000000,
+      "license": "Apache-2.0",
+      "commercialUse": true,
+      "version": "2025-04-02",
+      "minRamMb": 400,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-dolphin-base-ctc-multi-lang-int8-2025-04-02.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "6f23da2303c3c2e5fa6445c450fa2a7133cd57e3da070ae5f97ab9e0dfbb4a54",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "model.int8.onnx",
+        "tokens": "tokens.txt"
+      },
+      "quality": "good",
+      "notes": "Tier-2 STT pack for Hindi: fastest option (RTF ~0.04 on a laptop core), native-script output with punctuation, WER 0.00 on the Hindi test sentences. Listed for 15 languages but verified only for Hindi/Gujarati; for Malayalam it wrote Tamil script, so other languages route to Omnilingual by default. Returns nothing for English."
+    },
+    {
+      "id": "dolphin-small-int8",
+      "kind": "stt",
+      "engine": "dolphin-ctc",
+      "name": "Dolphin small CTC (int8) — larger, more accurate Dolphin",
+      "languages": [
+        "hi",
+        "bn",
+        "gu",
+        "as",
+        "ur",
+        "ta",
+        "te",
+        "mr",
+        "kn",
+        "ml",
+        "pa",
+        "ne",
+        "or",
+        "ks",
+        "sat"
+      ],
+      "sizeBytes": 191534345,
+      "installedBytes": 250200000,
+      "license": "Apache-2.0",
+      "commercialUse": true,
+      "version": "2025-04-02",
+      "minRamMb": 800,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-dolphin-small-ctc-multi-lang-int8-2025-04-02.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "7346b00ffe42396fff5c96d11892f0d4d72ac11418d47c5a8ada2b0f6ac8d27b",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "model.int8.onnx",
+        "tokens": "tokens.txt"
+      },
+      "quality": "good",
+      "notes": "Same family as dolphin-base (DataoceanAI Dolphin, 40 Eastern languages) but ~3x the parameters. Laptop/server or flagship phones."
+    },
+    {
+      "id": "whisper-base-en-int8",
+      "kind": "stt",
+      "engine": "whisper",
+      "name": "OpenAI Whisper base.en (int8) — English only",
+      "languages": [
+        "en"
+      ],
+      "sizeBytes": 208576005,
+      "installedBytes": 454000000,
+      "license": "MIT",
+      "commercialUse": true,
+      "version": "base.en",
+      "minRamMb": 600,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-base.en.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "475bc7052ce299c007f6d5d5407ba8601f819a2867f6eecee510ed17df581542",
+        "stripTopDir": true
+      },
+      "model": {
+        "encoder": "base.en-encoder.int8.onnx",
+        "decoder": "base.en-decoder.int8.onnx",
+        "tokens": "base.en-tokens.txt"
+      },
+      "quality": "good",
+      "notes": "Tier-2 English pack (Indian English accents handled reasonably). Used when the OS engine has no English on-device model. Note: the tar contains fp32 + int8 files; only the int8 ones are loaded."
+    },
+    {
+      "id": "omnilingual-300m-int8",
+      "kind": "stt",
+      "engine": "omnilingual-ctc",
+      "name": "Meta Omnilingual ASR 300M CTC (int8) — all 22 scheduled languages",
+      "languages": [
+        "hi",
+        "bn",
+        "gu",
+        "as",
+        "ur",
+        "ta",
+        "te",
+        "mr",
+        "kn",
+        "ml",
+        "pa",
+        "ne",
+        "or",
+        "ks",
+        "sat",
+        "sa",
+        "mai",
+        "kok",
+        "doi",
+        "brx",
+        "mni",
+        "sd",
+        "en"
+      ],
+      "sizeBytes": 292571207,
+      "installedBytes": 366000000,
+      "license": "Apache-2.0",
+      "commercialUse": true,
+      "version": "2025-11-12",
+      "minRamMb": 900,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-omnilingual-asr-1600-languages-300M-ctc-int8-2025-11-12.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "cdcd0559c7c73efed54209a926e321afc914d046c5fdbf3665f00dc78180e5ed",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "model.int8.onnx",
+        "tokens": "tokens.txt"
+      },
+      "quality": "fair",
+      "notes": "Default tier-2 STT pack for every language except Hindi/English. Covers all 22 scheduled languages (1,600+ total); verified on Malayalam (near-perfect) and Gujarati. RTF ~0.25 on a laptop core. May emit Urdu script for Hindi speech because the model is script-agnostic; the SDK reports the script it sees."
+    },
+    {
+      "id": "whisper-base-int8",
+      "kind": "stt",
+      "engine": "whisper",
+      "name": "OpenAI Whisper base (int8) — language ID + 14 Indian languages",
+      "languages": [
+        "hi",
+        "bn",
+        "ta",
+        "te",
+        "mr",
+        "gu",
+        "kn",
+        "ml",
+        "pa",
+        "ur",
+        "ne",
+        "sa",
+        "as",
+        "sd",
+        "en"
+      ],
+      "sizeBytes": 207557382,
+      "installedBytes": 453000000,
+      "license": "MIT",
+      "commercialUse": true,
+      "version": "base",
+      "minRamMb": 600,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-base.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "911b2083efd7c0dca2ac3b358b75222660dc09fb716d64fbfc417ba6c99ff3de",
+        "stripTopDir": true
+      },
+      "model": {
+        "encoder": "base-encoder.int8.onnx",
+        "decoder": "base-decoder.int8.onnx",
+        "tokens": "base-tokens.txt"
+      },
+      "quality": "weak",
+      "notes": "Built-in spoken-language identification, but Indic transcripts are often romanised or wrong. Kept for comparison/benchmarking only."
+    },
+    {
+      "id": "whisper-small-int8",
+      "kind": "stt",
+      "engine": "whisper",
+      "name": "OpenAI Whisper small (int8)",
+      "languages": [
+        "hi",
+        "bn",
+        "ta",
+        "te",
+        "mr",
+        "gu",
+        "kn",
+        "ml",
+        "pa",
+        "ur",
+        "ne",
+        "sa",
+        "as",
+        "sd",
+        "en"
+      ],
+      "sizeBytes": 639387718,
+      "installedBytes": 1400000000,
+      "license": "MIT",
+      "commercialUse": true,
+      "version": "small",
+      "minRamMb": 1500,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-small.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "486a46afbb7ba798507190ffe02fea2dd726049af212e774537efac6afb210a6",
+        "stripTopDir": true
+      },
+      "model": {
+        "encoder": "small-encoder.int8.onnx",
+        "decoder": "small-decoder.int8.onnx",
+        "tokens": "small-tokens.txt"
+      },
+      "quality": "fair",
+      "notes": "Better than base on Hindi but slow on phones (RTF > 1 on mid-range devices). Server-side use only; the proxy's local provider can use it."
+    },
+    {
+      "id": "whisper-turbo-int8",
+      "kind": "stt",
+      "engine": "whisper",
+      "name": "OpenAI Whisper large-v3-turbo (int8)",
+      "languages": [
+        "hi",
+        "bn",
+        "ta",
+        "te",
+        "mr",
+        "gu",
+        "kn",
+        "ml",
+        "pa",
+        "ur",
+        "ne",
+        "sa",
+        "as",
+        "sd",
+        "en"
+      ],
+      "sizeBytes": 563790207,
+      "installedBytes": 1040000000,
+      "license": "MIT",
+      "commercialUse": true,
+      "version": "large-v3-turbo",
+      "minRamMb": 2500,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-turbo.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "b11acbbcd660b44a8e0df33724feb5aaa709cf65668f2823d59f656312544f22",
+        "stripTopDir": true
+      },
+      "model": {
+        "encoder": "turbo-encoder.int8.onnx",
+        "decoder": "turbo-decoder.int8.onnx",
+        "tokens": "turbo-tokens.txt"
+      },
+      "quality": "good",
+      "notes": "Best Whisper that is practical on a laptop CPU; strongest open model here for English and for telling languages apart. Server/laptop only (1 GB)."
+    },
+    {
+      "id": "indicconformer-hi-int8",
+      "kind": "stt",
+      "engine": "nemo-ctc",
+      "name": "AI4Bharat IndicConformer (Hindi, int8) — requires export",
+      "languages": [
+        "hi"
+      ],
+      "sizeBytes": 0,
+      "license": "MIT",
+      "commercialUse": true,
+      "version": "export-needed",
+      "archive": {
+        "url": "",
+        "format": "tar.bz2",
+        "sha256": null
+      },
+      "model": {
+        "model": "model.int8.onnx",
+        "tokens": "tokens.txt"
+      },
+      "quality": "best",
+      "status": "needs-export",
+      "notes": "Recommended production pack per the comparison doc. Export the NeMo checkpoint (ai4bharat/indic-conformer-600m-multilingual) to ONNX with scripts/export-indicconformer.md, host the tar.bz2 on your CDN, then fill url/sha256/sizeBytes here. The SDK will pick it up with no code change."
+    },
+    {
+      "id": "piper-hi-priyamvada",
+      "kind": "tts",
+      "engine": "vits",
+      "name": "Piper hi_IN priyamvada (medium, 22.05 kHz)",
+      "languages": [
+        "hi"
+      ],
+      "sizeBytes": 67240610,
+      "installedBytes": 81143049,
+      "license": "MIT (model) / CC-BY-NC-SA-4.0 (training data)",
+      "commercialUse": false,
+      "version": "medium",
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-hi_IN-priyamvada-medium.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "399d91cc97eb288725633261f26b715f9a971e3bf7ec4fa1d7910cd0080d37eb",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "hi_IN-priyamvada-medium.onnx",
+        "tokens": "tokens.txt",
+        "dataDir": "espeak-ng-data"
+      },
+      "quality": "clear",
+      "gender": "female",
+      "notes": "Clear, fast (~0.1x real time). Training data is CC-BY-NC-SA, so use for testing only; replace with an Indic-TTS/AI4Bharat VITS export for commercial apps."
+    },
+    {
+      "id": "piper-ml-meera",
+      "kind": "tts",
+      "engine": "vits",
+      "name": "Piper ml_IN meera (medium, int8)",
+      "languages": [
+        "ml"
+      ],
+      "sizeBytes": 21112290,
+      "license": "MIT (Piper) / dataset: IIT Madras Indic TTS Malayalam (check its terms)",
+      "commercialUse": false,
+      "version": "medium-int8",
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-ml_IN-meera-medium-int8.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "e4e87086c39c477a538cf42e8a3337f6d6ebce8ef2b2e6dfa61bc28b129d341c",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "ml_IN-meera-medium.onnx",
+        "tokens": "tokens.txt",
+        "dataDir": "espeak-ng-data"
+      },
+      "quality": "clear",
+      "gender": "female"
+    },
+    {
+      "id": "kokoro-int8-multilang",
+      "kind": "tts",
+      "engine": "kokoro",
+      "name": "Kokoro 82M v1.0 multi-language (int8) — Hindi + English voices",
+      "languages": [
+        "hi",
+        "en"
+      ],
+      "sizeBytes": 132353410,
+      "installedBytes": 192000000,
+      "license": "Apache-2.0",
+      "commercialUse": true,
+      "version": "v1.0",
+      "minRamMb": 600,
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-int8-multi-lang-v1_0.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "72c347230107ef8a31098ec4d468a605244beef5f1ed00db97efa13518800653",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "model.int8.onnx",
+        "voices": "voices.bin",
+        "tokens": "tokens.txt",
+        "dataDir": "espeak-ng-data",
+        "lexicon": "lexicon-us-en.txt,lexicon-zh.txt",
+        "dictDir": "dict",
+        "sampleRate": 24000
+      },
+      "voices": {
+        "hi": {
+          "hf_alpha": 31,
+          "hf_beta": 32,
+          "hm_omega": 33,
+          "hm_psi": 34
+        },
+        "en": {
+          "af_heart": 3,
+          "af_bella": 2,
+          "af_nicole": 6,
+          "am_michael": 16,
+          "am_adam": 11,
+          "bf_emma": 21,
+          "bf_isabella": 22,
+          "bm_george": 26,
+          "bm_daniel": 24,
+          "hf_alpha": 31,
+          "hm_omega": 33
+        }
+      },
+      "quality": "natural",
+      "notes": "Most natural open voice for Hindi/English (24 kHz). Hindi: hf_alpha, hf_beta (female), hm_omega, hm_psi (male). English: af_*/am_* (US), bf_*/bm_* (UK); hf_alpha / hm_omega speaking English give an Indian accent. Too slow for low-end phones — flagship devices or the backend's local provider."
+    },
+    {
+      "id": "mimic3-gu-cmu-indic",
+      "kind": "tts",
+      "engine": "vits",
+      "name": "Mimic3 gu_IN cmu-indic (low quality, test voice)",
+      "languages": [
+        "gu"
+      ],
+      "sizeBytes": 79992004,
+      "license": "see MycroftAI/mimic3-voices (dataset: CMU INDIC)",
+      "commercialUse": true,
+      "version": "low",
+      "archive": {
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-mimic3-gu_IN-cmu-indic_low.tar.bz2",
+        "format": "tar.bz2",
+        "sha256": "ed6849f311bac71cc9f76b33d32412671ca201ea4b3b575f7b28d67e26eac6ae",
+        "stripTopDir": true
+      },
+      "model": {
+        "model": "gu_IN-cmu-indic_low.onnx",
+        "tokens": "tokens.txt",
+        "dataDir": "espeak-ng-data"
+      },
+      "quality": "low",
+      "gender": "female",
+      "notes": "Only open Gujarati voice available as a ready pack; robotic but intelligible. Use for testing STT in Gujarati; the Android OS voice is better."
+    }
+  ]
+}

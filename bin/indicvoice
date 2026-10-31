@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Desktop test CLI launcher. Needs: JDK 17+ on PATH, build/indicvoice-cli.jar (scripts/build-jvm.sh).
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+JAR="$ROOT/build/indicvoice-cli.jar"
+[ -f "$JAR" ] || { echo "build/indicvoice-cli.jar missing — run scripts/build-jvm.sh" >&2; exit 1; }
+CP="$JAR"
+for j in "$ROOT"/third_party/sherpa-onnx/libs/sherpa-onnx-native-lib-*.jar; do CP="$CP:$j"; done
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-}"
+# Java decodes command-line arguments with the shell locale; make sure it is UTF-8 so Devanagari etc. survive.
+case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+  *UTF-8*|*utf8*|*UTF8*) ;;
+  *) if locale -a 2>/dev/null | grep -qiE '^en_US\.utf-?8$'; then export LC_ALL=en_US.UTF-8; else export LC_ALL=C.UTF-8; fi ;;
+esac
+exec java -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 -Dindicvoice.root="$ROOT" \
+  -Xmx2g -cp "$CP" dev.indicvoice.jvm.Main "$@"

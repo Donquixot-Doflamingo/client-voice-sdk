@@ -16,14 +16,15 @@ echo "   java:    $(java -version 2>&1 | grep -m1 " version ")"; echo "   kotlin
 say "2/5 native library"; ensure_natives; echo "   $NATIVE_JAR"
 say "3/5 build";   scripts/build.sh
 STDLIB="$(kotlin_stdlib)"; CP="build/client-voice-sdk.jar:$STDLIB:$NATIVE_JAR"
-export LC_ALL="${LC_ALL:-$(locale -a 2>/dev/null | grep -qi '^en_US.utf-\?8$' && echo en_US.UTF-8 || echo C.UTF-8)}"
+export LC_ALL="${LC_ALL:-$(locale -a 2>/dev/null | grep -qiE '^en_US\.utf-?8$' && echo en_US.UTF-8 || echo C.UTF-8)}"
 JOPTS=(-Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8)
 # Behind an office proxy? Java ignores HTTPS_PROXY by default; pass it on for the model downloads.
 PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 if [ -n "$PROXY" ]; then hp="${PROXY#*://}"; hp="${hp##*@}"; hp="${hp%%/*}"; JOPTS+=(-Dhttps.proxyHost="${hp%%:*}" -Dhttps.proxyPort="${hp##*:}"); fi
 
 say "4/5 self-test (JSON, languages, language detection, transcript format, audio, VAD segmenter, WER, config, bzip2)"
-"$KOTLINC" -nowarn -jvm-target 17 -cp "$CP" -d build/tests sdk-core/src/test/kotlin sdk-jvm/src/test/kotlin 2>&1 | grep -E 'error' && die "test compile failed" || true
+rm -rf build/tests
+"$KOTLINC" -nowarn -jvm-target 17 -cp "$CP" -d build/tests sdk-core/src/test/kotlin sdk-jvm/src/test/kotlin || die "test compile failed"
 java "${JOPTS[@]}" -cp "build/tests:$CP" dev.indicvoice.core.SelfTest
 
 if [ "$MODELS" = 1 ]; then

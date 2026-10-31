@@ -11,5 +11,5 @@ rm -rf build/classes build/tmp; mkdir -p build/classes build/tmp
   sdk-core/src/main/kotlin third_party/sherpa-onnx/kotlin-api third_party/sherpa-onnx/jvm-stubs \
   sdk-sherpa/src/main/kotlin sdk-jvm/src/main/kotlin
 mkdir -p build/classes/indicvoice && cp config/voice-config.json config/catalog.json build/classes/indicvoice/
-(cd build/classes && jar cf ../client-voice-sdk.jar .)
+make_jar build/client-voice-sdk.jar build/classes
 say "built build/client-voice-sdk.jar ($(du -h build/client-voice-sdk.jar | cut -f1)); it needs kotlin-stdlib on the classpath"

@@ -28,6 +28,7 @@ ensure_java() {
   local j
   for j in "${JAVA_HOME:+$JAVA_HOME/bin/java}" "$(command -v java 2>/dev/null)" "$TOOLS/jdk/bin/java" "$TOOLS/jdk/Contents/Home/bin/java"; do
     [ -n "$j" ] && [ -x "$j" ] || continue
+    j="$(resolve_path "$j")"
     if [ "$(java_major "$j" 2>/dev/null)" -ge 17 ] 2>/dev/null; then
       export JAVA_HOME="$(cd "$(dirname "$j")/.." && pwd)"; export PATH="$JAVA_HOME/bin:$PATH"; return 0
     fi
@@ -41,10 +42,11 @@ ensure_java() {
   export PATH="$JAVA_HOME/bin:$PATH"
 }
 
+# Always the pinned compiler in .tools/ (same version everywhere: laptops, CI), unless KOTLINC is set explicitly.
+# (A system kotlinc is often a symlink — e.g. Homebrew, GitHub runners — whose lib/ folder is elsewhere.)
 ensure_kotlinc() {
   if [ -n "${KOTLINC:-}" ] && [ -x "$KOTLINC" ]; then return 0; fi
   if [ -x "$TOOLS/kotlinc/bin/kotlinc" ]; then KOTLINC="$TOOLS/kotlinc/bin/kotlinc"; export KOTLINC; return 0; fi
-  if command -v kotlinc >/dev/null 2>&1 && kotlinc -version 2>&1 | grep -q 'kotlinc-jvm 2\.'; then KOTLINC="$(command -v kotlinc)"; export KOTLINC; return 0; fi
   say "Kotlin compiler not found — downloading kotlinc $KOTLIN_VER (~80 MB) into .tools/kotlinc"
   mkdir -p "$TOOLS"; rm -rf "$TOOLS/kotlinc"
   download "https://github.com/JetBrains/kotlin/releases/download/v$KOTLIN_VER/kotlin-compiler-$KOTLIN_VER.zip" "$TOOLS/kotlinc.zip"
@@ -52,7 +54,30 @@ ensure_kotlinc() {
   KOTLINC="$TOOLS/kotlinc/bin/kotlinc"; export KOTLINC
 }
 
-kotlin_stdlib() { echo "$(cd "$(dirname "$KOTLINC")/.." && pwd)/lib/kotlin-stdlib.jar"; }
+# Follows symlinks (portable: macOS has no `readlink -f` before 12.3).
+resolve_path() { local p="$1" d; while [ -L "$p" ]; do d="$(cd "$(dirname "$p")" && pwd)"; p="$(readlink "$p")"; case "$p" in /*) ;; *) p="$d/$p" ;; esac; done; echo "$(cd "$(dirname "$p")" && pwd)/$(basename "$p")"; }
+
+kotlin_stdlib() {
+  local lib; lib="$(cd "$(dirname "$(resolve_path "$KOTLINC")")/.." && pwd)/lib/kotlin-stdlib.jar"
+  [ -f "$lib" ] || die "kotlin-stdlib.jar not found next to $KOTLINC (expected $lib)"
+  echo "$lib"
+}
+
+# make_jar OUT.jar DIR [MainClass] — uses the JDK's `jar` when present, otherwise zip (a JRE has no `jar`;
+# on macOS /usr/bin/jar is only a stub that asks you to install Java).
+make_jar() {
+  local out="$1" dir="$2" main="${3:-}" mf
+  out="$(cd "$(dirname "$out")" && pwd)/$(basename "$out")"; rm -f "$out"
+  mf="$(mktemp)"; { echo "Manifest-Version: 1.0"; [ -n "$main" ] && echo "Main-Class: $main"; echo "Created-By: client-voice-sdk scripts"; } > "$mf"
+  if [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/jar" ]; then
+    "$JAVA_HOME/bin/jar" cfm "$out" "$mf" -C "$dir" .
+  else
+    command -v zip >/dev/null 2>&1 || die "neither a JDK 'jar' tool nor 'zip' is available"
+    rm -rf "$dir/META-INF/MANIFEST.MF"; mkdir -p "$dir/META-INF"; cp "$mf" "$dir/META-INF/MANIFEST.MF"
+    (cd "$dir" && zip -qr -X "$out" META-INF/MANIFEST.MF . )
+  fi
+  rm -f "$mf"
+}
 
 # The sherpa-onnx native library jar for THIS machine (desktop JVM only; Android/iOS use the AAR / xcframework).
 ensure_natives() {
